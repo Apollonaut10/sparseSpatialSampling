@@ -181,17 +181,20 @@ class ExportData:
 
         # create a group for each specified field
         for i, t in enumerate(self._write_times[t_start:t_end]):
+            # process field name to remove underscores for the HDF5 dataset names
+            field_name = self._field_name.replace("_", "")
+
             # in case we have a scalar, we need to remove the additional dimension we created for fitting the data
             if self._interpolated_fields.centers.size(1) == 1:
-                self._datawriter.write_data(f"{self._field_name}_center", group=DATA, time_step=str(t),
+                self._datawriter.write_data(f"{field_name}_center", group=DATA, time_step=str(t),
                                             data=self._interpolated_fields.centers.squeeze(1)[:, i])
-                self._datawriter.write_data(f"{self._field_name}_vertices", group=DATA, time_step=str(t),
+                self._datawriter.write_data(f"{field_name}_vertices", group=DATA, time_step=str(t),
                                             data=self._interpolated_fields.vertices.squeeze(1)[:, i])
             # in case we have a vector
             else:
-                self._datawriter.write_data(f"{self._field_name}_center", group=DATA, time_step=str(t),
+                self._datawriter.write_data(f"{field_name}_center", group=DATA, time_step=str(t),
                                             data=self._interpolated_fields.centers[:, :, i])
-                self._datawriter.write_data(f"{self._field_name}_vertices", group=DATA, time_step=str(t),
+                self._datawriter.write_data(f"{field_name}_vertices", group=DATA, time_step=str(t),
                                             data=self._interpolated_fields.vertices[:, :, i])
 
         # check if we have written all snapshots, if yes, then write the XDMF file
